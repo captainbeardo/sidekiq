@@ -46,7 +46,6 @@ module Sidekiq
             msg['failed_at'] = Time.now.utc
             msg['retry_count'] = 0
           end
-          #logger.error("With Retry options! #{msg.fetch 'retry_options', :dude}") if msg['retry_options']
           retry_options = msg.fetch('retry_options', {})
 
           if can_be_retried?(msg, count, retry_options)
@@ -67,8 +66,6 @@ module Sidekiq
         def can_be_retried?(msg, count, retry_options)
           # Check expiration
           expiration = Time.parse(retry_options['expiration']) rescue nil if retry_options['expiration']
-          logger.error("Retry_options #{retry_options}")
-          logger.error("Expiration: #{expiration} Now: #{Time.now.utc}")
           return false if expiration && Time.now.utc > expiration
 
           # Check retry count
